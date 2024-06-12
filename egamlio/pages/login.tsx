@@ -1,7 +1,26 @@
 import Head from "next/head";
 import Link from "next/link";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { loginUser } from '../utils/auth';
 
-const login = () => {
+
+const Login: React.FC = () => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const router = useRouter();
+
+    const handleLogin = async (e: React.FormEvent) => {
+        e.preventDefault();
+        const response = await loginUser(email, password);
+        if (response.success) {
+            router.push('/');
+        } else {
+            setError(response.message);
+        }
+    };
+
     return (
         <>
             <Head>
@@ -34,22 +53,23 @@ const login = () => {
                                             <h4>Welcome Back!</h4>
                                             <p>We're so excited to see you again! Log In to your Egamlio Account!</p>
                                         </div>
-                                        <form action="#">
+                                        <form onSubmit={handleLogin}>
                                             <div className="row">
                                                 <div className="col-12">
-                                                    <div className="single-input">
+                                                    <div className="form-group">
                                                         <label htmlFor="email">Email Address</label>
                                                         <div className="input-box">
-                                                            <input type="text" id="email" placeholder="Enter Your Email" />
+                                                            <input type="text" id="email" className="form-control" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter Your Email" required />
                                                         </div>
                                                     </div>
-                                                    <div className="single-input">
+                                                    <div className="form-group">
                                                         <label htmlFor="passInput">Password</label>
                                                         <div className="input-box">
-                                                            <input type="text" id="passInput" placeholder="Enter Your Password" />
+                                                            <input type="text" id="passInput" className="form-control" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter Your Password" required />
                                                             <img className="showPass" src="/images/icon/show-hide.png" alt="icon" />
                                                         </div>
                                                     </div>
+                                                    {error && <p className="text-danger">{error}</p>}
                                                     <div className="remember-me">
                                                         <label className="checkbox-single d-flex align-items-center">
                                                             <span className="left-area">
@@ -66,7 +86,7 @@ const login = () => {
                                                     </div>
                                                 </div>
                                             </div>
-                                            <button className="cmn-btn mt-40 w-100">Login</button>
+                                            <button className="btn btn-primary mt-4 w-100" type="submit">Login</button>
                                         </form>
                                         <div className="reg-with">
                                             <div className="or">
@@ -82,8 +102,8 @@ const login = () => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="account mt-30">
-                                        <p>Don't have an account? <Link href="register">Sign Up Here</Link></p>
+                                    <div className="account mt-3">
+                                        <p>Don't have an account? <Link href="/register">Sign Up Here</Link></p>
                                     </div>
                                 </div>
                             </div>
@@ -95,4 +115,4 @@ const login = () => {
     );
 };
 
-export default login;
+export default Login;
